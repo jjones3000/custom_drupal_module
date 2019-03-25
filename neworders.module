@@ -1,0 +1,96 @@
+<?php
+
+function neworders_preprocess_page(&$variables)	{
+// Your drupal_add_js() goes here
+drupal_add_js(drupal_get_path('module', 'neworders') .'/neworders.js');
+$variables['scripts'] = drupal_get_js();
+}  
+//echo $form_state['values']['field_customer_order_quickfill'];
+/**
+ * Implements hook_form_alter()
+ */
+ 
+ /*
+  *
+  * hook_form_FORM_ID_alter
+  * [module_name] _form_ [form_id] _alter
+  *
+  *
+  */
+
+
+  function _ajax_example_get_first_dropdown_options() {
+ 
+  return drupal_map_assoc(array(
+    t('5 Star Ford (Rodeo Ford) - Hinkson, Eric - 8'),
+    t('Crawford, Sandra - 5'),
+    t('Crawford, Sandra - 6'),
+    t('Enthusiast Auto - Keller, Eric - 1'),
+	t('Enthusiast Auto - Keller, Eric - 2'),
+	t('Jurasis, Chris - 3'),
+	t('Kopanos, Steve - 9'),
+	t('Strong, Zine - 4'),
+	t('Waller, J. Marc - 7'),
+  ));
+ 
+}
+ function neworders_form_order_node_form_alter(&$form, &$form_state, $form_id){
+
+ $options_first = _ajax_example_get_first_dropdown_options(); 
+ $selected = isset($form_state['values']['field_customer_quickfill']) ? $form_state['values']['field_customer_quickfill'] : key($options_first);
+
+ /*$form[] = array(
+ '#prefix' => '<div name="content">',
+ '#suffix' => '</div>', 
+ );*/
+
+ $form['field_order_customer_company']=array(
+                '#title' => t('Company'),
+                '#type' => 'textfield',
+				//'#default_value'=>t('who wants to know'),
+				
+                );
+
+  $form['field_customer_quickfill'] = array(
+				'#type' => 'select',
+				'#title' => 'Quickfill',
+				'#options' => $options_first,
+				'#default_value' => $selected,
+				
+				'#markup' => 'onchange=getalert()',
+				/*'#ajax' => array(
+					'event' => 'change',
+					'callback' => 'getalert',
+					'wrapper' => 'content',
+					),*/
+				);
+
+	/*$form['field_order_customer_first_name'] = array(
+				
+				'#type' => 'textfield',
+				'#title' => t('First Name'),
+				'#value' => t(''),				
+				);
+	*/
+	return $form;
+ }
+
+function autofill_order_callback($form, &$form_state, $form_id) {
+
+if ($form['field_customer_quickfill']['#value'] == 'Jurasis, Chris - 3'){
+		$form['field_order_customer_first_name']['#value'] = t('Ryan');
+		//drupal_process_form($form_id, $form, $form_state);
+		//drupal_rebuild_form($form_id, $form_state, $args, $form_build_id);
+		//$form['idnum'] = $form_id;
+		return $form;
+}
+else{
+		$form['field_order_customer_first_name']['#value'] = t('Jeff');
+		//drupal_process_form($form_id, $form, $form_state);
+		//drupal_rebuild_form($form_id, $form_state, $args, $form_build_id);
+		return $form;
+ }
+
+
+  }
+

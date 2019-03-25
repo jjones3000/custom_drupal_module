@@ -1,0 +1,6 @@
+name = New Orders
+description = Autofills the new orders form based on the quickfill field
+package = custom
+core = 7.x
+scripts[] = neworders.js
+files[] = neworders.php
